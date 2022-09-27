@@ -1,6 +1,5 @@
 import React from 'react'
-import women from '../../assets/img/image.jpg'
-import './App.css'
+import s from './App.module.css'
 
 export const App = () => {
     const [text, setText] = React.useState('')
@@ -11,8 +10,26 @@ export const App = () => {
     }
 
     const addTodo = () => {
-        setTodos( [...todos, text] )
+        const newTodo = {
+            id: Date.now(),
+            title: text,
+            complete: false,
+        }
+        setTodos( [...todos, newTodo] )
+        console.log(todos)
         setText('')
+    }
+
+    const changeComplete = (id) => {
+        const newArr = todos.map(
+            todo => {
+                if(todo.id === id){
+                    return {...todo, complete: !todo.complete}
+                }
+                return todo
+            }
+        )
+        setTodos(newArr)
     }
 
     return (
@@ -28,11 +45,30 @@ export const App = () => {
 
             {
                 todos.map(todo => {
-                    return <div>{todo}</div>
+                    return (
+                        <div>
+                            <input 
+                                type="checkbox" 
+                                checked={todo.complete}
+                                onChange={() => changeComplete(todo.id)}
+                            />
+                            <span
+                                className={todo.complete ? `${s.text} ${s.active}` : s.text}
+                            >{todo.title}</span>
+                            <button
+                                onClick = { () => {
+                                    const filteredArr = todos.filter( item => {
+                                        if(item.id !== todo.id){
+                                            return item
+                                        }
+                                    })
+                                    setTodos(filteredArr)
+                                }}
+                            >X</button>
+                        </div>
+                    )
                 })
             }
-
-            <img src={women} width={50}  alt="" />
         </div>
     )
 }

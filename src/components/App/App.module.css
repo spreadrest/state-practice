@@ -1,0 +1,17 @@
+span{
+    display: inline-block;
+    position: relative;
+}
+
+.text:before{
+    content: '';
+    position: absolute;
+    top: 10px;
+    width: 0;
+    height: 1px;
+    background: pink;
+    transition: .5s;
+}
+.text.active:before{
+    width: 100%;
+}
