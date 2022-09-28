@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import s from './App.module.css'
 
 export const App = () => {
     const [text, setText] = React.useState('')
     const [todos, setTodos] = React.useState([])
+
+    const inputRef = useRef(null)
+    
 
     const changeText = (e) => {
         setText(e.target.value)
@@ -32,21 +35,41 @@ export const App = () => {
         setTodos(newArr)
     }
 
+    const deleteTodo = (id) => {
+        const filteredArr = todos.filter( todo => {
+            if(todo.id !== id){
+                return todo
+            }
+        })
+        setTodos(filteredArr)
+    }
+
+    const keyHandler = (e) => {
+        if(e.key === 'Enter'){
+            addTodo()
+        }
+    }
+
     return (
         <div>
             <input 
                 type="text" 
                 value={text}
                 onChange={ changeText }
+                onKeyDown={ keyHandler }
+                ref={inputRef}
             />
             <button
                 onClick={addTodo}
             >Add</button>
+            <button
+                onClick={ () => inputRef.current.focus()}
+            >focus</button>
 
             {
                 todos.map(todo => {
                     return (
-                        <div>
+                        <div key={todo.id}>
                             <input 
                                 type="checkbox" 
                                 checked={todo.complete}
@@ -56,14 +79,7 @@ export const App = () => {
                                 className={todo.complete ? `${s.text} ${s.active}` : s.text}
                             >{todo.title}</span>
                             <button
-                                onClick = { () => {
-                                    const filteredArr = todos.filter( item => {
-                                        if(item.id !== todo.id){
-                                            return item
-                                        }
-                                    })
-                                    setTodos(filteredArr)
-                                }}
+                                onClick = {() => deleteTodo(todo.id)}
                             >X</button>
                         </div>
                     )
